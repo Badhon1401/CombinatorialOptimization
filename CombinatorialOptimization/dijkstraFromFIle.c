@@ -17,10 +17,10 @@ int minDistance(int dist[], int visited[]) {
 }
 
 // Function to print the final solution including paths
-void printSolution(int dist[], int parent[]) {
-    printf("Vertex \t Distance from Source \t Path\n");
+void printSolution(int dist[], int parent[], char* places[]) {
+    printf("Vertex \t Place \t Distance from Source \t Path\n");
     for (int i = 0; i < V; i++) {
-        printf("%d \t %d \t\t\t ", i, dist[i]);
+        printf("%d \t %s \t %d \t\t\t ", i, places[i], dist[i]);
 
         // Print the path from the source to vertex i
         int j = i;
@@ -34,7 +34,7 @@ void printSolution(int dist[], int parent[]) {
 }
 
 // Dijkstra's algorithm to find the shortest paths from source to all vertices
-void dijkstra(int graph[V][V], int src) {
+void dijkstra(int graph[V][V], int src, char* places[]) {
     int dist[V];      // Array to store the shortest distance from source to i
     int visited[V];    // Array to keep track of visited vertices
     int parent[V];     // Array to store the parent vertices
@@ -65,22 +65,32 @@ void dijkstra(int graph[V][V], int src) {
     }
 
     // Print the shortest distances and paths
-    printSolution(dist, parent);
+    printSolution(dist, parent, places);
 }
 
 int main() {
-    int graph[V][V] = {
-        {0, 1, 4, 0, 0, 0},
-        {1, 0, 4, 2, 7, 0},
-        {4, 4, 0, 3, 5, 0},
-        {0, 2, 3, 0, 4, 6},
-        {0, 7, 5, 4, 0, 7},
-        {0, 0, 0, 6, 7, 0}
-    };
+    char* places[V] = {"A", "B", "C", "D", "E", "F"};
+
+    FILE* file = fopen("graph.txt", "r");
+    if (file == NULL) {
+        perror("Error opening the file");
+        return 1;
+    }
+
+    int graph[V][V];
+
+    // Read the graph from the file
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            fscanf(file, "%d", &graph[i][j]);
+        }
+    }
+
+    fclose(file);
 
     int source = 0; // Source vertex
 
-    dijkstra(graph, source);
+    dijkstra(graph, source, places);
 
     return 0;
 }
